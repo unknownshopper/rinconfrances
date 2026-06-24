@@ -134,6 +134,16 @@ function confirmarPedido(){
 
     console.log("CONFIRMAR CLICK");
 
+    var textoPedido = "";
+    textoPedido += "Rincón Francés\n";
+    textoPedido += "Fecha: " + new Date().toLocaleString() + "\n";
+    textoPedido += "Masa: " + (pedido.masa || "") + "\n";
+    textoPedido += "Ingredientes:\n";
+    for (var i = 0; i < pedido.ingredientes.length; i++) {
+        textoPedido += "- " + pedido.ingredientes[i].nombre + " ($" + pedido.ingredientes[i].precio + ")\n";
+    }
+    textoPedido += "Total: $" + pedido.total;
+
     try {
         console.log("CONFIRMAR: leyendo localStorage...");
         var raw = localStorage.getItem("pedidos");
@@ -157,7 +167,8 @@ function confirmarPedido(){
         location.reload();
     } catch (err) {
         console.log("ERROR confirmarPedido:", err);
-        alert("No se pudo guardar el pedido en este dispositivo");
+        prompt("Copia tu pedido:", textoPedido);
+        location.reload();
     }
 }
 
