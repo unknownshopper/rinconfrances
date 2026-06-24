@@ -134,25 +134,31 @@ function confirmarPedido(){
 
     console.log("CONFIRMAR CLICK");
 
-    var pedidos =
-        JSON.parse(localStorage.getItem("pedidos")) || [];
+    try {
+        console.log("CONFIRMAR: leyendo localStorage...");
+        var raw = localStorage.getItem("pedidos");
+        var pedidos = raw ? JSON.parse(raw) : [];
 
-    pedidos.push({
-        fecha: new Date().toLocaleString(),
-        categoria: pedido.categoria,
-        masa: pedido.masa,
-        total: pedido.total,
-        ingredientes: pedido.ingredientes
-    });
+        pedidos.push({
+            fecha: new Date().toLocaleString(),
+            categoria: pedido.categoria,
+            masa: pedido.masa,
+            total: pedido.total,
+            ingredientes: pedido.ingredientes
+        });
 
-    localStorage.setItem(
-        "pedidos",
-        JSON.stringify(pedidos)
-    );
+        console.log("CONFIRMAR: guardando localStorage...");
+        localStorage.setItem(
+            "pedidos",
+            JSON.stringify(pedidos)
+        );
 
-    alert("Pedido registrado");
-
-    location.reload();
+        alert("Pedido registrado");
+        location.reload();
+    } catch (err) {
+        console.log("ERROR confirmarPedido:", err);
+        alert("No se pudo guardar el pedido en este dispositivo");
+    }
 }
 
 document.addEventListener("click", function (e) {
