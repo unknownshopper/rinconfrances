@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rincón Francés</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+    <!-- Pantalla Inicio -->
+    <section id="inicio" class="pantalla activa">
+
+        <div class="hero">
+            <h1>🥞 Rincón Francés</h1>
+            <p>¿Qué deseas ordenar hoy?</p>
+        </div>
+
+        <div class="categorias">
+
+            <div class="card" onclick="seleccionarCategoria('crepa')">
+                <div class="emoji">🥞</div>
+                <h2>Crepas</h2>
+            </div>
+
+            <div class="card deshabilitada">
+                <div class="emoji">🍕</div>
+                <h2>Pizzas</h2>
+                <small>Próximamente</small>
+            </div>
+
+            <div class="card deshabilitada">
+                <div class="emoji">🍝</div>
+                <h2>Pastas</h2>
+                <small>Próximamente</small>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Pantalla Masa -->
+    <section id="masa" class="pantalla">
+
+        <h1>Selecciona tu masa</h1>
+
+        <div class="categorias">
+
+            <div class="card" onclick="seleccionarMasa('Tradicional',30)">
+                🥞
+                <h2>Tradicional</h2>
+            </div>
+
+            <div class="card" onclick="seleccionarMasa('Chocolate',35)">
+                🍫
+                <h2>Chocolate</h2>
+            </div>
+
+            <div class="card" onclick="seleccionarMasa('Integral',35)">
+                🌾
+                <h2>Integral</h2>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Pantalla Ingredientes -->
+    <section id="ingredientes" class="pantalla">
+
+        <div class="layout">
+
+            <div class="izquierda">
+
+                <h1>Elige tus ingredientes</h1>
+
+                <div class="leyenda">
+                    <span class="badge badge-dulce">🍓 Dulces</span>
+                    <span class="badge badge-salado">🥩 Salados</span>
+                </div>
+
+                <div id="ingredientesGrid"></div>
+
+            </div>
+            
+
+            <div class="derecha">
+
+                <h2>Tu pedido</h2>
+
+                <div id="resumen"></div>
+
+                <h1 id="total">$0</h1>
+
+                <button class="confirmar" onclick="confirmarPedido()">
+                    Confirmar Pedido
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
