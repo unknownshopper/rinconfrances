@@ -158,3 +158,19 @@ body{
     font-weight: bold;
     color: #2ecc71;
 }
+
+.ingrediente.premium{
+    background:#e8f5e9;
+}
+
+.badge-premium{
+    background:#66bb6a;
+    color:white;
+}
+
+.confirmar{
+    background:#2ecc71;
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+}
