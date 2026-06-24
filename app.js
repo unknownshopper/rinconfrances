@@ -1,4 +1,4 @@
-const ingredientesDisponibles = [
+var ingredientesDisponibles = [
 
     // Dulces
     {nombre:"Nutella",precio:15,categoria:"dulce"},
@@ -19,7 +19,7 @@ const ingredientesDisponibles = [
 
 ];
 
-let pedido = {
+var pedido = {
     categoria:null,
     masa:null,
     total:0,
@@ -57,96 +57,87 @@ function seleccionarMasa(nombre,precio){
 
 function cargarIngredientes(){
 
-    const grid =
+    var grid =
         document.getElementById("ingredientesGrid");
 
     grid.innerHTML = "";
 
-    ingredientesDisponibles.forEach(item=>{
+    for (var idx = 0; idx < ingredientesDisponibles.length; idx++) {
+        (function (item) {
 
-        const div =
-            document.createElement("div");
+            var div =
+                document.createElement("div");
 
-        div.className =
-            `ingrediente ${item.categoria}`;
+            div.className =
+                "ingrediente " + item.categoria;
 
-        const badge =
-            item.categoria === "dulce"
-            ? "badge badge-dulce"
-            : "badge badge-salado";
+            var badge =
+                item.categoria === "dulce"
+                ? "badge badge-dulce"
+                : "badge badge-salado";
 
-        div.innerHTML = `
-            <h3>${item.nombre}</h3>
+            div.innerHTML =
+                "<h3>" + item.nombre + "</h3>" +
+                "<div class=\"precio\">$" + item.precio + "</div>" +
+                "<span class=\"" + badge + "\">" + item.categoria.toUpperCase() + "</span>";
 
-            <div class="precio">
-                $${item.precio}
-            </div>
+            div.onclick = function () {
 
-            <span class="${badge}">
-                ${item.categoria.toUpperCase()}
-            </span>
-        `;
+                div.classList.toggle("activo");
 
-        div.onclick = ()=>{
+                var existeIndex = -1;
+                for (var i = 0; i < pedido.ingredientes.length; i++) {
+                    if (pedido.ingredientes[i].nombre === item.nombre) {
+                        existeIndex = i;
+                        break;
+                    }
+                }
 
-            div.classList.toggle("activo");
+                if (existeIndex !== -1) {
+                    pedido.ingredientes.splice(existeIndex, 1);
+                    pedido.total -= item.precio;
+                } else {
+                    pedido.ingredientes.push(item);
+                    pedido.total += item.precio;
+                }
 
-            const existe =
-                pedido.ingredientes.find(
-                    i=>i.nombre===item.nombre
-                );
+                actualizarResumen();
+            };
 
-            if(existe){
-
-                pedido.ingredientes =
-                    pedido.ingredientes.filter(
-                        i=>i.nombre!==item.nombre
-                    );
-
-                pedido.total -= item.precio;
-
-            }else{
-
-                pedido.ingredientes.push(item);
-
-                pedido.total += item.precio;
-            }
-
-            actualizarResumen();
-        };
-
-        grid.appendChild(div);
-    });
+            grid.appendChild(div);
+        })(ingredientesDisponibles[idx]);
+    }
 }
 
 function actualizarResumen(){
 
-    const resumen =
+    var resumen =
         document.getElementById("resumen");
 
-    resumen.innerHTML = `
-        <p><strong>Masa:</strong> ${pedido.masa}</p>
-    `;
+    resumen.innerHTML =
+        "<p><strong>Masa:</strong> " + pedido.masa + "</p>";
 
-    pedido.ingredientes.forEach(item=>{
-
-        resumen.innerHTML += `
-            <p>✔ ${item.nombre}</p>
-        `;
-    });
+    for (var i = 0; i < pedido.ingredientes.length; i++) {
+        var item = pedido.ingredientes[i];
+        resumen.innerHTML +=
+            "<p>✔ " + item.nombre + "</p>";
+    }
 
     document.getElementById("total")
-        .textContent = `$${pedido.total}`;
+        .textContent = "$" + pedido.total;
 }
 
 function confirmarPedido(){
 
-    const pedidos =
+    var pedidos =
         JSON.parse(localStorage.getItem("pedidos")) || [];
 
     pedidos.push({
-        fecha:new Date().toLocaleString(),
-        ...pedido
+        fecha: new Date().toLocaleString(),
+        categoria: pedido.categoria,
+        masa: pedido.masa,
+        total: pedido.total,
+        ingredientes: pedido.ingredientes
     });
 
     localStorage.setItem(
