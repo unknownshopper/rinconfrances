@@ -30,9 +30,10 @@ console.log("ENTORNO:", location.href);
 
 function mostrar(id){
 
-    document
-        .querySelectorAll(".pantalla")
-        .forEach(p=>p.classList.remove("activa"));
+    var pantallas = document.querySelectorAll(".pantalla");
+    for (var i = 0; i < pantallas.length; i++) {
+        pantallas[i].classList.remove("activa");
+    }
 
     document
         .getElementById(id)
