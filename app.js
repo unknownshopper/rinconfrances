@@ -26,6 +26,8 @@ var pedido = {
     ingredientes:[]
 };
 
+console.log("ENTORNO:", location.href);
+
 function mostrar(id){
 
     document
@@ -128,6 +130,8 @@ function actualizarResumen(){
 }
 
 function confirmarPedido(){
+
+    console.log("CONFIRMAR CLICK");
 
     var pedidos =
         JSON.parse(localStorage.getItem("pedidos")) || [];
