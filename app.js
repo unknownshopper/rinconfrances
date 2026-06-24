@@ -28,6 +28,57 @@ var pedido = {
 
 console.log("ENTORNO:", location.href);
 
+function getCookie(name) {
+    var cookieName = name + "=";
+    var decodedCookie = decodeURIComponent(document.cookie || "");
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(cookieName) === 0) {
+            return c.substring(cookieName.length, c.length);
+        }
+    }
+    return "";
+}
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function leerPedidos() {
+    try {
+        var raw = localStorage.getItem("pedidos");
+        return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+        var rawCookie = getCookie("pedidos");
+        if (!rawCookie) return [];
+        try {
+            return JSON.parse(rawCookie);
+        } catch (e) {
+            return [];
+        }
+    }
+}
+
+function guardarPedidos(pedidos) {
+    var json = JSON.stringify(pedidos);
+    try {
+        localStorage.setItem("pedidos", json);
+        return;
+    } catch (err) {
+        setCookie("pedidos", json, 7);
+    }
+}
+
 function mostrar(id){
 
     var pantallas = document.querySelectorAll(".pantalla");
@@ -144,32 +195,18 @@ function confirmarPedido(){
     }
     textoPedido += "Total: $" + pedido.total;
 
-    try {
-        console.log("CONFIRMAR: leyendo localStorage...");
-        var raw = localStorage.getItem("pedidos");
-        var pedidos = raw ? JSON.parse(raw) : [];
+    var pedidos = leerPedidos();
+    pedidos.push({
+        fecha: new Date().toLocaleString(),
+        categoria: pedido.categoria,
+        masa: pedido.masa,
+        total: pedido.total,
+        ingredientes: pedido.ingredientes
+    });
 
-        pedidos.push({
-            fecha: new Date().toLocaleString(),
-            categoria: pedido.categoria,
-            masa: pedido.masa,
-            total: pedido.total,
-            ingredientes: pedido.ingredientes
-        });
-
-        console.log("CONFIRMAR: guardando localStorage...");
-        localStorage.setItem(
-            "pedidos",
-            JSON.stringify(pedidos)
-        );
-
-        alert("Pedido registrado");
-        location.reload();
-    } catch (err) {
-        console.log("ERROR confirmarPedido:", err);
-        prompt("Copia tu pedido:", textoPedido);
-        location.reload();
-    }
+    guardarPedidos(pedidos);
+    alert("Pedido registrado");
+    location.reload();
 }
 
 document.addEventListener("click", function (e) {

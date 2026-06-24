@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operador - Rincón Francés</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+    <section class="pantalla activa">
+        <div class="hero">
+            <h1>Operador</h1>
+            <p>Pedidos confirmados en este dispositivo</p>
+        </div>
+
+        <div style="max-width: 900px; margin: 30px auto;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                <button class="confirmar" onclick="renderPedidos()">Actualizar</button>
+                <button class="confirmar" style="background:#e74c3c" onclick="borrarPedidos()">Borrar todo</button>
+                <a class="confirmar" style="text-decoration:none; display:inline-block; text-align:center; background:#34495e" href="./">Volver al kiosko</a>
+            </div>
+
+            <div id="lista" style="margin-top: 25px;"></div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+function getCookie(name) {
+    var cookieName = name + "=";
+    var decodedCookie = decodeURIComponent(document.cookie || "");
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(cookieName) === 0) {
+            return c.substring(cookieName.length, c.length);
+        }
+    }
+    return "";
+}
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function leerPedidos() {
+    try {
+        var raw = localStorage.getItem("pedidos");
+        return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+        var rawCookie = getCookie("pedidos");
+        if (!rawCookie) return [];
+        try {
+            return JSON.parse(rawCookie);
+        } catch (e) {
+            return [];
+        }
+    }
+}
+
+function guardarPedidos(pedidos) {
+    var json = JSON.stringify(pedidos);
+    try {
+        localStorage.setItem("pedidos", json);
+        return;
+    } catch (err) {
+        setCookie("pedidos", json, 7);
+    }
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function renderPedidos() {
+    var lista = document.getElementById("lista");
+    var pedidos = leerPedidos();
+
+    if (!pedidos.length) {
+        lista.innerHTML = "<div class=\"card\" style=\"width:auto;height:auto;padding:20px;\"><h2>Sin pedidos</h2><p>Aún no hay pedidos confirmados en este dispositivo.</p></div>";
+        return;
+    }
+
+    var html = "";
+    for (var p = pedidos.length - 1; p >= 0; p--) {
+        var pedido = pedidos[p];
+        html += "<div class=\"card\" style=\"width:auto;height:auto;padding:20px;margin-bottom:15px;align-items:stretch\">";
+        html += "<h2>Pedido " + (p + 1) + "</h2>";
+        html += "<p><strong>Fecha:</strong> " + escapeHtml(pedido.fecha || "") + "</p>";
+        html += "<p><strong>Masa:</strong> " + escapeHtml(pedido.masa || "") + "</p>";
+        html += "<p><strong>Total:</strong> $" + escapeHtml(pedido.total || 0) + "</p>";
+
+        html += "<div style=\"margin-top:10px\">";
+        html += "<p><strong>Ingredientes:</strong></p>";
+        if (pedido.ingredientes && pedido.ingredientes.length) {
+            html += "<div style=\"display:flex;flex-wrap:wrap;gap:8px\">";
+            for (var i = 0; i < pedido.ingredientes.length; i++) {
+                var ing = pedido.ingredientes[i];
+                html += "<span class=\"badge\" style=\"background:#ecf0f1\">" + escapeHtml(ing.nombre) + " ($" + escapeHtml(ing.precio) + ")</span>";
+            }
+            html += "</div>";
+        } else {
+            html += "<p>(Sin ingredientes)</p>";
+        }
+        html += "</div>";
+
+        html += "</div>";
+    }
+
+    lista.innerHTML = html;
+}
+
+function borrarPedidos() {
+    if (!confirm("¿Borrar todos los pedidos guardados en este dispositivo?")) return;
+    guardarPedidos([]);
+    renderPedidos();
+}
+
+renderPedidos();
+</script>
+
+</body>
+</html>
