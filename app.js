@@ -159,8 +159,8 @@ function confirmarPedido(){
     location.reload();
 }
 
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest?.(".btn-crepa");
+document.addEventListener("click", function (e) {
+  var btn = (e.target && e.target.closest) ? e.target.closest(".btn-crepa") : null;
   if (btn) {
     console.log("Crepa seleccionada");
     seleccionarCategoria("crepa");
